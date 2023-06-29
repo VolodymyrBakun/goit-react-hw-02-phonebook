@@ -13,10 +13,19 @@ export class ContactForm extends Component {
       [event.target.name]: event.target.value,
     });
   };
+    
+    handleFormSubmit = (event) => {
+        event.preventDefault();
+        this.props.onAddContact(this.state);
+        this.setState({
+          name: '',
+          number: '',
+        });
+}
 
   render() {
     return (
-      <Form>
+      <Form onSubmit={this.handleFormSubmit}>
         <label htmlFor="name">Name</label>
         <Name
           id="name"
@@ -41,13 +50,6 @@ export class ContactForm extends Component {
         />
         <SubmitBtn
           type="submit"
-          onClick={event => {
-            this.props.onAddContact(event, this.state);
-            this.setState({
-              name: '',
-              number: '',
-            });
-          }}
         >
           Add contact
         </SubmitBtn>

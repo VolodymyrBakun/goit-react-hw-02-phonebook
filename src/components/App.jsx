@@ -3,7 +3,6 @@ import { nanoid } from 'nanoid';
 import { ContactForm } from './ContactForm/ContactForm';
 import { ContactList } from './ContactList/ContactList';
 import { Filter } from './Filter/Filter';
-import PropTypes from 'prop-types';
 import { Container } from './App.styled';
 
 export class App extends Component {
@@ -12,29 +11,30 @@ export class App extends Component {
     filter: '',
   };
 
-  onFormSubmit = (event, contactData) => {
-    event.preventDefault();
-    if (contactData.name === '') {
+  onFormSubmit = ({ name, number }) => {
+    // event.preventDefault();
+    if (name === '') {
       alert('Please fill in the name and phone number!');
       return;
     }
 
-    const isExist = this.state.contacts.some(
-      contact => contact.name.toLowerCase() === contactData.name.toLowerCase()
+    const isExist = this.state.contacts.find(
+      contact => contact.name.toLowerCase() === name.toLowerCase()
     );
 
     if (isExist) {
-      alert(`${contactData.name} is already in contacts.`);
+      alert(`${name} is already in contacts.`);
       return;
     }
 
     const contact = {
       id: nanoid(),
-      name: contactData.name,
-      number: contactData.number,
+      name,
+      number,
     };
-    this.setState({
-      contacts: [...this.state.contacts, contact],
+
+    this.setState(prevState => {
+      return { contacts: [...prevState.contacts, contact] };
     });
   };
 
@@ -52,11 +52,11 @@ export class App extends Component {
   };
 
   handleDelete = idToDelete => {
-    const filtredContacts = this.state.contacts.filter(
-      contact => contact.id !== idToDelete
-    );
-    this.setState({
-      contacts: filtredContacts,
+    this.setState(prevState => {
+      const filtredContacts = prevState.contacts.filter(
+        contact => contact.id !== idToDelete
+      );
+      return { contacts: filtredContacts };
     });
   };
 
@@ -74,12 +74,3 @@ export class App extends Component {
     );
   }
 }
-
-App.propTypes = {
-  event: PropTypes.object,
-  contactData: PropTypes.shape({
-    name: PropTypes.string,
-    number: PropTypes.string,
-  }),
-  idToDelete: PropTypes.string,
-};
